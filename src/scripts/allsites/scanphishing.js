@@ -65,7 +65,9 @@ let aeonDomain = [
     "aeonbank.co.jp"
 ]
 // SMBC
+// smbc-card
 let SMBCTitle = /SMBCダイレクトログイン ： SMBCダイレクト/
+let smbcCardTitle = /三井住友カード会員向けサービス「Vpass」ログイン/
 let SMBCDomain = [
     "smbc-card.com",
     "smbc.co.jp",
@@ -97,6 +99,7 @@ let titleDomainList = [
     [JREastSuica, JREastDomain],
     [aeonTitle, aeonDomain],
     [SMBCTitle, SMBCDomain],
+    [smbcCardTitle, SMBCDomain],
     [mercariTitle, mercariDomain],
     [etcTitle, etcDomain],
     [jpPostTitle, jpPostDomain]
@@ -104,7 +107,7 @@ let titleDomainList = [
 
 // アラートを出す関数
 function alertPhishing(content){
-    window.alert("\\\\\\\\\\\\\\\\\\\\フィッシングの恐れあり//////////\nリンク元を確認してください.\n理由"+content+"\n\nこの警告は拡張機能「Kadai-Portal」によるものです。\n誤検知など不具合はmimimimineko.comまで\n")
+    window.alert("//////////フィッシングの恐れあり//////////\nリンクを確認してください.\n\n理由\n"+content+"\n\nこの警告は拡張機能「Kadai-Portal」によるものです。\n誤検知など不具合はmimimimineko.comまで\n")
 }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -127,17 +130,35 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     }
 
+    // 代表的なサイトについてはタイトルとドメインをチェック-->不具合
+    // for(let i=0; i<titleDomainList.length; i++){
+    //     if(title.match(titleDomainList[i][0])){
+    //         if(titleDomainList[i][1].includes(domain)){
+    //             console.log("Kadai-Portal: OK Matched Title and Domain");
+    //             return;
+    //         }else{
+    //             console.log("Kadai-Portal: NG Matched Title but not Domain");
+    //             alertPhishing("タイトルとドメインの組み合わせが不正");
+    //             return;
+    //         }
+    //     }
+    // }
+
     // 代表的なサイトについてはタイトルとドメインをチェック
+    // タイトルをチェックし、一致したらドメインをチェック
     for(let i=0; i<titleDomainList.length; i++){
+        // titleの一致
         if(title.match(titleDomainList[i][0])){
-            if(titleDomainList[i][1].includes(domain)){
-                console.log("Kadai-Portal: OK Matched Title and Domain");
-                return;
-            }else{
-                console.log("Kadai-Portal: NG Matched Title but not Domain");
-                alertPhishing("タイトルとドメインの組み合わせが不正");
-                return;
+            for(let j=0; j<titleDomainList[i][1].length; j++){
+                // domainの一致
+                if(domain.endsWith(titleDomainList[i][1][j])){
+                    console.log("Kadai-Portal: OK Matched Title and Domain");
+                    return;
+                }
             }
+            console.log("Kadai-Portal: NG Matched Title but not Domain");
+            alertPhishing("タイトルとドメインの組み合わせが不正");
+            return;
         }
     }
     console.log("Kadai-Portal: Not Matched : "+ title + "   :   " +domain);
