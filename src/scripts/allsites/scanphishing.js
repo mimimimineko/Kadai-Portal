@@ -29,9 +29,9 @@ let blacklistDomain = [
     "duckdns.org",
     "cn",
     "ru",
-    "is",
-    "top",
-    "xyz"
+    "is"
+    // "top",
+    // "xyz"
 ]
 // Amazon
 let amazonTitle = /Amazonサインイン/
